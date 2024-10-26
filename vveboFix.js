@@ -1,15 +1,12 @@
 let url = $request.url;
 let hasUid = (url) => url.includes("uid");
-let getUid = (url) => (hasUid(url) ? url.match(/uid=(\d+)/)[1] : undefined);
+let getUid = (url) => (hasUid(url) ? url.match(/uid=(\d+)/)[1] : '5230204825');
 
 if (url.includes("remind/unread_count")) {
     $persistentStore.write(getUid(url), "uid");
     $done({});
 } else if (url.includes("statuses/user_timeline")) {
     let uid = getUid(url) || $persistentStore.read("uid");
-    if (!uid) {
-        uid = '5230204825';
-    }
     url = url.replace("statuses/user_timeline", "profile/statuses/tab").replace("max_id", "since_id");
     url = url + `&containerid=230413${uid}_-_WEIBO_SECOND_PROFILE_WEIBO`;
     $done({ url });
