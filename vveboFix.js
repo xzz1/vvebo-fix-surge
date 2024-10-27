@@ -1,6 +1,6 @@
 let url = $request.url;
 let hasUid = (url) => url.includes("uid");
-let getUid = (url) => (hasUid(url) ? url.match(/uid=(\d+)/)[1] : '5230204825');
+let getUid = (url) => (hasUid(url) ? url.match(/uid=(\d+)/)[1] : '5230204825'); // edit by iphone
 
 if (url.includes("remind/unread_count")) {
     $persistentStore.write(getUid(url), "uid");
