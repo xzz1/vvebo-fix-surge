@@ -11,15 +11,22 @@ if (url.includes("remind/unread_count")) {
     url = url + `&containerid=230413${uid}_-_WEIBO_SECOND_PROFILE_WEIBO`;
     $done({ url });
 } else if (url.includes("profile/statuses/tab")) {
-    let data = JSON.parse($response.body);
-    let statuses = data.cards
-        .map((card) => (card.card_group ? card.card_group : card))
-        .flat()
-        .filter((card) => card.card_type === 9)
-        .map((card) => card.mblog)
-        .map((status) => (status.isTop ? { ...status, label: "置顶" } : status));
-    let sinceId = data.cardlistInfo.since_id;
-    $done({ body: JSON.stringify({ statuses, since_id: sinceId, total_number: 100 }) });
+    if (typeof $response === "undefined") {
+        // 请求阶段：将 count 参数修改为 25
+        url = url.replace(/(count=)\d+/, "$125");
+        $done({ url });
+    } else {
+        // 响应阶段：按原逻辑处理响应体
+        let data = JSON.parse($response.body);
+        let statuses = data.cards
+            .map((card) => (card.card_group ? card.card_group : card))
+            .flat()
+            .filter((card) => card.card_type === 9)
+            .map((card) => card.mblog)
+            .map((status) => (status.isTop ? { ...status, label: "置顶" } : status));
+        let sinceId = data.cardlistInfo.since_id;
+        $done({ body: JSON.stringify({ statuses, since_id: sinceId, total_number: 100 }) });
+    }
 } else {
     $done({});
 }
